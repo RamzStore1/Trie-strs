@@ -1,0 +1,1328 @@
+<html class="scroll-smooth" lang="id">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1" name="viewport"/>
+  <title>
+   Trie Store
+  </title>
+  <script src="https://cdn.tailwindcss.com">
+  </script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter&amp;display=swap" rel="stylesheet"/>
+  <style>
+   body {
+      font-family: 'Inter', sans-serif;
+    }
+  </style>
+ </head>
+ <body class="bg-white min-h-screen flex flex-col">
+  <div class="flex-grow flex flex-col" id="app">
+   <!-- LOGIN SCREEN -->
+   <section class="flex flex-col justify-center items-center min-h-screen p-6 bg-cyan-50" id="login-screen">
+    <h1 class="text-4xl font-bold mb-10 text-cyan-900 select-none">
+     Trie Store
+    </h1>
+    <div class="w-full max-w-md bg-white rounded-lg shadow-lg p-8">
+     <h2 class="text-2xl font-semibold mb-6 text-cyan-800 text-center select-none">
+      Login
+     </h2>
+     <div class="flex flex-col space-y-6">
+      <button class="w-full py-3 bg-cyan-700 hover:bg-cyan-800 text-white rounded-md font-semibold transition" id="btn-login-admin">
+       Login Admin
+      </button>
+      <button class="w-full py-3 bg-cyan-400 hover:bg-cyan-500 text-white rounded-md font-semibold transition" id="btn-login-guest">
+       Login Tamu
+      </button>
+     </div>
+    </div>
+   </section>
+   <!-- ADMIN PIN MODAL -->
+   <div aria-labelledby="admin-pin-title" aria-modal="true" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 hidden" id="admin-pin-modal" role="dialog">
+    <div class="bg-white rounded-lg shadow-lg p-6 w-80 max-w-full">
+     <h3 class="text-xl font-semibold mb-4 text-cyan-900 select-none" id="admin-pin-title">
+      Masukkan PIN Admin
+     </h3>
+     <input aria-label="PIN Admin" class="w-full border border-cyan-400 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-cyan-600" id="admin-pin-input" inputmode="numeric" maxlength="5" pattern="[0-9]*" placeholder="PIN 8 digit" type="password"/>
+     <div class="mt-4 flex justify-end space-x-3">
+      <button class="px-4 py-2 rounded-md border border-cyan-600 text-cyan-600 hover:bg-cyan-100 transition" id="btn-cancel-pin">
+       Batal
+      </button>
+      <button class="px-4 py-2 rounded-md bg-cyan-700 text-white hover:bg-cyan-800 transition" id="btn-submit-pin">
+       Masuk
+      </button>
+     </div>
+     <p class="text-red-600 mt-2 text-sm hidden select-none" id="pin-error" role="alert">
+     </p>
+    </div>
+   </div>
+   <!-- LOADING SCREEN -->
+   <section aria-busy="true" aria-live="polite" class="fixed inset-0 bg-cyan-500 flex flex-col justify-center items-center space-y-6 z-40 hidden" id="loading-screen">
+    <img alt="Logo Trie Store, a stylized blue and white store icon with modern font" class="w-48 h-48 object-contain" height="200" loading="eager" src="https://files.catbox.moe/v8lj9z.jpg" width="200"/>
+    <h1 class="text-white text-3xl font-bold select-none">
+     Trie Store
+    </h1>
+    <div class="flex flex-col items-center space-y-2">
+     <img alt="Loading spinner icon, white hourglass on black background" aria-hidden="true" class="animate-spin w-12 h-12" height="50" src="https://storage.googleapis.com/a1aa/image/f1bf00a7-13b1-4264-7513-263314af5660.jpg" width="50"/>
+     <p class="text-white text-lg font-semibold select-none">
+      Mohon Tunggu sebentar
+     </p>
+    </div>
+   </section>
+   <!-- MAIN APP -->
+   <main aria-label="Main application interface" class="hidden flex-grow flex flex-col md:flex-row bg-white min-h-screen" id="main-app">
+    <!-- GROUP 1: USER VIEW -->
+    <section aria-label="User interface" class="flex flex-col flex-grow md:w-2/3 border-r border-cyan-300 overflow-auto" id="group1" tabindex="0">
+     <header class="flex items-center justify-between bg-cyan-600 text-white px-4 py-3 select-none sticky top-0 z-30">
+      <h1 class="text-2xl font-bold">
+       Trie Str
+      </h1>
+      <div class="relative" id="menu-bar-container">
+       <button aria-controls="menu-bar-dropdown" aria-expanded="false" aria-haspopup="true" class="focus:outline-none focus:ring-2 focus:ring-white p-2 rounded hover:bg-cyan-700" id="menu-bar-button" title="Menu Bar">
+        <i class="fas fa-bars fa-lg">
+        </i>
+        <span class="sr-only">
+         Toggle menu
+        </span>
+       </button>
+       <nav aria-label="Main menu" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 hidden" id="menu-bar-dropdown" role="menu">
+        <button class="block w-full text-left px-4 py-2 text-cyan-700 hover:bg-cyan-100 focus:bg-cyan-100 focus:outline-none" data-menu="produk" role="menuitem" tabindex="-1">
+         Produk
+        </button>
+        <button class="block w-full text-left px-4 py-2 text-cyan-700 hover:bg-cyan-100 focus:bg-cyan-100 focus:outline-none" data-menu="benefit" role="menuitem" tabindex="-1">
+         Benefit
+        </button>
+        <button class="block w-full text-left px-4 py-2 text-cyan-700 hover:bg-cyan-100 focus:bg-cyan-100 focus:outline-none" data-menu="payment" role="menuitem" tabindex="-1">
+         Payment
+        </button>
+        <button class="block w-full text-left px-4 py-2 text-cyan-700 hover:bg-cyan-100 focus:bg-cyan-100 focus:outline-none" data-menu="form" role="menuitem" tabindex="-1">
+         Isi Form Pemesanan
+        </button>
+        <a class="block w-full text-left px-4 py-2 text-cyan-700 hover:bg-cyan-100 focus:bg-cyan-100 focus:outline-none" href="https://whatsapp.com/channel/0029VbAygr64dTnKjDJPfm3u" rel="noopener noreferrer" role="menuitem" tabindex="-1" target="_blank">
+         Testimoni
+        </a>
+       </nav>
+      </div>
+     </header>
+     <section aria-live="polite" class="flex-grow overflow-auto p-4 bg-cyan-50" id="content-area" tabindex="0">
+      <!-- Content changes here based on menu -->
+      <article class="space-y-4" id="home-content">
+       <h2 class="text-xl font-semibold text-cyan-800 select-none">
+        Selamat datang di Trie Store!
+       </h2>
+       <p class="text-cyan-700">
+        Silakan pilih menu di atas untuk melihat produk, benefit, payment, isi form pemesanan, atau testimoni.
+       </p>
+      </article>
+      <!-- Produk Content -->
+      <article aria-label="Daftar produk dan katalog" class="hidden space-y-4" id="produk-content">
+       <div class="space-y-3" id="catalog-list">
+        <!-- Catalog 1 -->
+        <details class="bg-white rounded-md shadow p-4" open="">
+         <summary class="cursor-pointer font-semibold text-cyan-800 select-none">
+          Katalog 1
+         </summary>
+         <ul class="mt-3 space-y-2">
+          <li class="flex justify-between items-center border-b border-cyan-200 pb-2">
+           <span>
+            Produk A1
+           </span>
+           <div class="flex items-center space-x-3">
+            <span class="font-semibold text-cyan-700">
+             Rp 50.000
+            </span>
+            <button aria-label="Lihat benefit Produk A1" class="btn-to-benefit bg-cyan-600 text-white px-3 py-1 rounded hover:bg-cyan-700 focus:outline-none focus:ring-2 focus:ring-cyan-700" data-product="Produk A1">
+             Benefit
+            </button>
+           </div>
+          </li>
+          <li class="flex justify-between items-center border-b border-cyan-200 pb-2">
+           <span>
+            Produk A2
+           </span>
+           <div class="flex items-center space-x-3">
+            <span class="font-semibold text-cyan-700">
+             Rp 75.000
+            </span>
+            <button aria-label="Lihat benefit Produk A2" class="btn-to-benefit bg-cyan-600 text-white px-3 py-1 rounded hover:bg-cyan-700 focus:outline-none focus:ring-2 focus:ring-cyan-700" data-product="Produk A2">
+             Benefit
+            </button>
+           </div>
+          </li>
+          <li class="flex justify-between items-center">
+           <span>
+            Produk A3
+           </span>
+           <div class="flex items-center space-x-3">
+            <span class="font-semibold text-cyan-700">
+             Rp 100.000
+            </span>
+            <button aria-label="Lihat benefit Produk A3" class="btn-to-benefit bg-cyan-600 text-white px-3 py-1 rounded hover:bg-cyan-700 focus:outline-none focus:ring-2 focus:ring-cyan-700" data-product="Produk A3">
+             Benefit
+            </button>
+           </div>
+          </li>
+         </ul>
+        </details>
+        <!-- Catalog 2 -->
+        <details class="bg-white rounded-md shadow p-4">
+         <summary class="cursor-pointer font-semibold text-cyan-800 select-none">
+          Katalog 2
+         </summary>
+         <ul class="mt-3 space-y-2">
+          <li class="flex justify-between items-center border-b border-cyan-200 pb-2">
+           <span>
+            Produk B1
+           </span>
+           <div class="flex items-center space-x-3">
+            <span class="font-semibold text-cyan-700">
+             Rp 120.000
+            </span>
+            <button aria-label="Lihat benefit Produk B1" class="btn-to-benefit bg-cyan-600 text-white px-3 py-1 rounded hover:bg-cyan-700 focus:outline-none focus:ring-2 focus:ring-cyan-700" data-product="Produk B1">
+             Benefit
+            </button>
+           </div>
+          </li>
+          <li class="flex justify-between items-center border-b border-cyan-200 pb-2">
+           <span>
+            Produk B2
+           </span>
+           <div class="flex items-center space-x-3">
+            <span class="font-semibold text-cyan-700">
+             Rp 150.000
+            </span>
+            <button aria-label="Lihat benefit Produk B2" class="btn-to-benefit bg-cyan-600 text-white px-3 py-1 rounded hover:bg-cyan-700 focus:outline-none focus:ring-2 focus:ring-cyan-700" data-product="Produk B2">
+             Benefit
+            </button>
+           </div>
+          </li>
+          <li class="flex justify-between items-center">
+           <span>
+            Produk B3
+           </span>
+           <div class="flex items-center space-x-3">
+            <span class="font-semibold text-cyan-700">
+             Rp 200.000
+            </span>
+            <button aria-label="Lihat benefit Produk B3" class="btn-to-benefit bg-cyan-600 text-white px-3 py-1 rounded hover:bg-cyan-700 focus:outline-none focus:ring-2 focus:ring-cyan-700" data-product="Produk B3">
+             Benefit
+            </button>
+           </div>
+          </li>
+         </ul>
+        </details>
+        <!-- Catalog 3 -->
+        <details class="bg-white rounded-md shadow p-4">
+         <summary class="cursor-pointer font-semibold text-cyan-800 select-none">
+          Katalog 3
+         </summary>
+         <ul class="mt-3 space-y-2">
+          <li class="flex justify-between items-center border-b border-cyan-200 pb-2">
+           <span>
+            Produk C1
+           </span>
+           <div class="flex items-center space-x-3">
+            <span class="font-semibold text-cyan-700">
+             Rp 80.000
+            </span>
+            <button aria-label="Lihat benefit Produk C1" class="btn-to-benefit bg-cyan-600 text-white px-3 py-1 rounded hover:bg-cyan-700 focus:outline-none focus:ring-2 focus:ring-cyan-700" data-product="Produk C1">
+             Benefit
+            </button>
+           </div>
+          </li>
+          <li class="flex justify-between items-center border-b border-cyan-200 pb-2">
+           <span>
+            Produk C2
+           </span>
+           <div class="flex items-center space-x-3">
+            <span class="font-semibold text-cyan-700">
+             Rp 90.000
+            </span>
+            <button aria-label="Lihat benefit Produk C2" class="btn-to-benefit bg-cyan-600 text-white px-3 py-1 rounded hover:bg-cyan-700 focus:outline-none focus:ring-2 focus:ring-cyan-700" data-product="Produk C2">
+             Benefit
+            </button>
+           </div>
+          </li>
+          <li class="flex justify-between items-center">
+           <span>
+            Produk C3
+           </span>
+           <div class="flex items-center space-x-3">
+            <span class="font-semibold text-cyan-700">
+             Rp 110.000
+            </span>
+            <button aria-label="Lihat benefit Produk C3" class="btn-to-benefit bg-cyan-600 text-white px-3 py-1 rounded hover:bg-cyan-700 focus:outline-none focus:ring-2 focus:ring-cyan-700" data-product="Produk C3">
+             Benefit
+            </button>
+           </div>
+          </li>
+         </ul>
+        </details>
+       </div>
+      </article>
+      <!-- Benefit Content -->
+      <article aria-label="Benefit produk" class="hidden" id="benefit-content">
+       <div aria-orientation="horizontal" class="flex space-x-4 mb-6" role="tablist">
+        <button aria-controls="benefit-panel-benefit1" aria-selected="true" class="benefit-tab-button flex flex-col items-center px-4 py-2 border-b-4 border-cyan-600 text-cyan-700 font-semibold focus:outline-none" data-benefit="benefit1" id="benefit-tab-benefit1" role="tab" tabindex="0">
+         <img alt="Gambar Benefit 1, ilustrasi produk dengan ikon bintang berwarna biru" class="w-20 h-20 object-contain mb-1 rounded" height="80" loading="lazy" src="https://storage.googleapis.com/a1aa/image/028a3339-90a9-488c-02d8-335144a1ee5b.jpg" width="80"/>
+         Benefit 1
+        </button>
+        <button aria-controls="benefit-panel-benefit2" aria-selected="false" class="benefit-tab-button flex flex-col items-center px-4 py-2 border-b-4 border-transparent text-cyan-500 font-semibold hover:text-cyan-700 focus:outline-none" data-benefit="benefit2" id="benefit-tab-benefit2" role="tab" tabindex="-1">
+         <img alt="Gambar Benefit 2, ilustrasi produk dengan ikon hati berwarna merah muda" class="w-20 h-20 object-contain mb-1 rounded" height="80" loading="lazy" src="https://storage.googleapis.com/a1aa/image/828eb0a3-11c2-4d9f-d9d9-96c80c44459b.jpg" width="80"/>
+         Benefit 2
+        </button>
+        <button aria-controls="benefit-panel-benefit3" aria-selected="false" class="benefit-tab-button flex flex-col items-center px-4 py-2 border-b-4 border-transparent text-cyan-500 font-semibold hover:text-cyan-700 focus:outline-none" data-benefit="benefit3" id="benefit-tab-benefit3" role="tab" tabindex="-1">
+         <img alt="Gambar Benefit 3, ilustrasi produk dengan ikon perisai berwarna hijau" class="w-20 h-20 object-contain mb-1 rounded" height="80" loading="lazy" src="https://storage.googleapis.com/a1aa/image/b3cf626b-57cd-4afd-ab55-59bd5f657d0b.jpg" width="80"/>
+         Benefit 3
+        </button>
+       </div>
+       <div>
+        <section aria-labelledby="benefit-tab-benefit1" class="benefit-panel" id="benefit-panel-benefit1" role="tabpanel" tabindex="0">
+         <div class="bg-white rounded-md shadow p-4 text-cyan-800">
+          <h3 class="text-lg font-semibold mb-2">
+           Benefit 1
+          </h3>
+          <p>
+           Benefit 1 memberikan keuntungan utama berupa kualitas produk terbaik dan layanan cepat.
+          </p>
+         </div>
+        </section>
+        <section aria-labelledby="benefit-tab-benefit2" class="benefit-panel hidden" id="benefit-panel-benefit2" role="tabpanel" tabindex="0">
+         <div class="bg-white rounded-md shadow p-4 text-cyan-800">
+          <h3 class="text-lg font-semibold mb-2">
+           Benefit 2
+          </h3>
+          <p>
+           Benefit 2 menawarkan diskon khusus dan program loyalitas untuk pelanggan setia.
+          </p>
+         </div>
+        </section>
+        <section aria-labelledby="benefit-tab-benefit3" class="benefit-panel hidden" id="benefit-panel-benefit3" role="tabpanel" tabindex="0">
+         <div class="bg-white rounded-md shadow p-4 text-cyan-800">
+          <h3 class="text-lg font-semibold mb-2">
+           Benefit 3
+          </h3>
+          <p>
+           Benefit 3 menyediakan metode pembayaran aman dan pengiriman cepat ke seluruh Indonesia.
+          </p>
+         </div>
+        </section>
+       </div>
+      </article>
+      <!-- Payment Content -->
+      <article aria-label="Metode pembayaran" class="hidden" id="payment-content">
+       <div class="space-y-6 max-w-md mx-auto">
+        <button aria-controls="qris-modal" aria-haspopup="dialog" class="w-full bg-cyan-600 text-white py-3 rounded-md font-semibold hover:bg-cyan-700 focus:outline-none focus:ring-2 focus:ring-cyan-700" id="btn-qris">
+         QRIS
+        </button>
+        <div class="flex justify-center space-x-4">
+         <button aria-label="Salin nomor Dana 081234567890" class="btn-copy-paymethod bg-cyan-400 text-white px-4 py-2 rounded-md font-semibold hover:bg-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-500" data-number="081234567890" data-paymethod="Dana">
+          Dana
+         </button>
+         <button aria-label="Salin nomor OVO 089876543210" class="btn-copy-paymethod bg-cyan-400 text-white px-4 py-2 rounded-md font-semibold hover:bg-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-500" data-number="089876543210" data-paymethod="OVO">
+          OVO
+         </button>
+         <button aria-label="Salin nomor GoPay 082112345678" class="btn-copy-paymethod bg-cyan-400 text-white px-4 py-2 rounded-md font-semibold hover:bg-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-500" data-number="082112345678" data-paymethod="GoPay">
+          GoPay
+         </button>
+        </div>
+       </div>
+      </article>
+      <!-- Form Content -->
+      <article aria-label="Form pemesanan produk" class="hidden max-w-md mx-auto bg-white rounded-md shadow p-6" id="form-content">
+       <h2 class="text-2xl font-semibold mb-4 text-cyan-800 select-none">
+        Form Pemesanan
+       </h2>
+       <form class="space-y-4" id="order-form" novalidate="">
+        <div>
+         <label class="block text-cyan-700 font-semibold mb-1" for="nama-produk">
+          Nama Produk
+         </label>
+         <input aria-required="true" class="w-full border border-cyan-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-cyan-600" id="nama-produk" name="nama-produk" required="" type="text"/>
+        </div>
+        <div>
+         <label class="block text-cyan-700 font-semibold mb-1" for="nama">
+          Nama
+         </label>
+         <input aria-required="true" class="w-full border border-cyan-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-cyan-600" id="nama" name="nama" required="" type="text"/>
+        </div>
+        <div>
+         <label class="block text-cyan-700 font-semibold mb-1" for="no-wa">
+          No WA (untuk pengiriman)
+         </label>
+         <input aria-required="true" class="w-full border border-cyan-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-cyan-600" id="no-wa" name="no-wa" pattern="^\+?\d{9,15}$" placeholder="Contoh: +6281234567890" required="" type="tel"/>
+        </div>
+        <div>
+         <label class="block text-cyan-700 font-semibold mb-1" for="req-nama-panel">
+          Req Nama Panel
+         </label>
+         <input aria-required="true" class="w-full border border-cyan-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-cyan-600" id="req-nama-panel" name="req-nama-panel" required="" type="text"/>
+        </div>
+        <div>
+         <label class="block text-cyan-700 font-semibold mb-1" for="bukti-transfer">
+          Bukti Transfer
+         </label>
+         <input accept="image/*" aria-required="true" class="w-full border border-cyan-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-cyan-600" id="bukti-transfer" name="bukti-transfer" required="" type="file"/>
+        </div>
+        <button class="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-3 rounded-md focus:outline-none focus:ring-2 focus:ring-red-700" id="btn-konfirmasi" type="submit">
+         Konfirmasi
+        </button>
+        <p class="mt-3 text-center font-semibold text-green-700 hidden select-none" id="konfirmasi-message" role="alert">
+        </p>
+       </form>
+       <button class="mt-2 bg-cyan-400 text-white px-4 py-2 rounded-md font-semibold hover:bg-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-700" id="btn-back-form">
+        Kembali ke Home
+       </button>
+      </article>
+      <!-- MT Screen (hidden by default) -->
+      <article aria-label="MT Screen" class="hidden fixed inset-0 bg-cyan-900 bg-opacity-95 flex flex-col justify-center items-center text-white p-6 z-50" id="mt-screen" tabindex="0">
+       <h2 class="text-4xl font-bold mb-6 select-none">
+        MT Screen
+       </h2>
+       <p class="text-lg max-w-xl text-center select-none">
+        Ini adalah tampilan MT yang dapat diaktifkan atau dimatikan oleh admin.
+       </p>
+       <button class="mt-8 bg-red-600 hover:bg-red-700 px-6 py-3 rounded-md font-semibold focus:outline-none focus:ring-2 focus:ring-red-700" id="btn-close-mt">
+        Tutup MT Screen
+       </button>
+      </article>
+     </section>
+    </section>
+    <!-- GROUP 2: ADMIN VIEW -->
+    <section aria-label="Admin interface" class="hidden md:flex flex-col md:w-1/3 border-l border-cyan-300 bg-cyan-50 min-h-screen overflow-auto" id="group2" tabindex="0">
+     <header class="bg-cyan-700 text-white p-4 select-none sticky top-0 z-30">
+      <h1 class="text-2xl font-bold">
+       Admin Tab
+      </h1>
+     </header>
+     <nav aria-label="Admin menu" class="flex space-x-2 p-4 border-b border-cyan-300 sticky top-12 bg-cyan-50 z-20" role="tablist">
+      <button aria-controls="admin-panel-atur-produk" aria-selected="true" class="admin-tab-button px-3 py-2 rounded-md bg-cyan-600 text-white font-semibold focus:outline-none focus:ring-2 focus:ring-cyan-700" data-admin-tab="atur-produk" id="admin-tab-atur-produk" role="tab" tabindex="0">
+       Atur Produk
+      </button>
+      <button aria-controls="admin-panel-konfirmasi" aria-selected="false" class="admin-tab-button px-3 py-2 rounded-md bg-cyan-300 text-cyan-900 font-semibold hover:bg-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-700" data-admin-tab="konfirmasi" id="admin-tab-konfirmasi" role="tab" tabindex="-1">
+       Konfirmasi
+      </button>
+      <button aria-controls="admin-panel-mt" aria-selected="false" class="admin-tab-button px-3 py-2 rounded-md bg-cyan-300 text-cyan-900 font-semibold hover:bg-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-700" data-admin-tab="mt" id="admin-tab-mt" role="tab" tabindex="-1">
+       Mt
+      </button>
+     </nav>
+     <section class="flex-grow overflow-auto p-4 space-y-6" id="admin-content" tabindex="0">
+      <!-- Atur Produk Panel -->
+      <section aria-labelledby="admin-tab-atur-produk" class="admin-panel" id="admin-panel-atur-produk" role="tabpanel">
+       <h2 class="text-xl font-semibold text-cyan-800 mb-4 select-none">
+        Atur Produk
+       </h2>
+       <!-- Manage Catalogs -->
+       <div class="space-y-6">
+        <div>
+         <h3 class="font-semibold text-cyan-700 mb-2 select-none">
+          Tambah Katalog Baru
+         </h3>
+         <form class="flex space-x-2" id="form-add-catalog" novalidate="">
+          <input aria-label="Nama katalog baru" class="flex-grow border border-cyan-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-cyan-600" id="new-catalog-name" placeholder="Nama Katalog" required="" type="text"/>
+          <button class="bg-cyan-600 text-white px-4 py-2 rounded-md font-semibold hover:bg-cyan-700 focus:outline-none focus:ring-2 focus:ring-cyan-700" type="submit">
+           Tambah
+          </button>
+         </form>
+        </div>
+        <div class="space-y-4 max-h-96 overflow-auto border border-cyan-300 rounded-md p-3 bg-white" id="catalogs-admin-list">
+        </div>
+       </div>
+       <!-- Manage Benefits -->
+       <div class="mt-8 space-y-4">
+        <h3 class="font-semibold text-cyan-700 mb-2 select-none">
+         Atur Benefit
+        </h3>
+        <form class="flex space-x-2" id="form-add-benefit" novalidate="">
+         <input aria-label="Nama benefit baru" class="flex-grow border border-cyan-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-cyan-600" id="new-benefit-name" placeholder="Nama Benefit" required="" type="text"/>
+         <input aria-label="URL gambar benefit baru" class="flex-grow border border-cyan-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-cyan-600" id="new-benefit-image" placeholder="URL Gambar Benefit" required="" type="url"/>
+         <textarea aria-label="Isi benefit baru" class="flex-grow border border-cyan-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-cyan-600 resize-y" id="new-benefit-desc" placeholder="Isi Benefit" required="" rows="2"></textarea>
+         <button class="bg-cyan-600 text-white px-4 py-2 rounded-md font-semibold hover:bg-cyan-700 focus:outline-none focus:ring-2 focus:ring-cyan-700" type="submit">
+          Tambah Benefit
+         </button>
+        </form>
+        <div class="space-y-4 max-h-72 overflow-auto border border-cyan-300 rounded-md p-3 bg-white" id="benefits-admin-list">
+        </div>
+       </div>
+      </section>
+      <!-- Konfirmasi Panel -->
+      <section aria-labelledby="admin-tab-konfirmasi" class="admin-panel hidden" id="admin-panel-konfirmasi" role="tabpanel">
+       <h2 class="text-xl font-semibold text-cyan-800 mb-4 select-none">
+        Konfirmasi Pemesanan
+       </h2>
+       <div class="space-y-4 max-h-[60vh] overflow-auto border border-cyan-300 rounded-md p-4 bg-white" id="konfirmasi-list">
+        <p class="text-cyan-700 select-none">
+         Belum ada konfirmasi pemesanan.
+        </p>
+       </div>
+      </section>
+      <!-- MT Panel -->
+      <section aria-labelledby="admin-tab-mt" class="admin-panel hidden" id="admin-panel-mt" role="tabpanel">
+       <h2 class="text-xl font-semibold text-cyan-800 mb-4 select-none">
+        MT Control
+       </h2>
+       <button aria-pressed="false" class="bg-cyan-600 text-white px-6 py-3 rounded-md font-semibold hover:bg-cyan-700 focus:outline-none focus:ring-2 focus:ring-cyan-700" id="btn-mt-toggle">
+        ON
+       </button>
+      </section>
+     </section>
+    </section>
+   </main>
+   <!-- QRIS Modal -->
+   <div aria-labelledby="qris-modal-title" aria-modal="true" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 hidden" id="qris-modal" role="dialog">
+    <div class="bg-white rounded-lg shadow-lg p-6 max-w-sm w-full relative">
+     <h3 class="text-xl font-semibold mb-4 text-cyan-900 select-none" id="qris-modal-title">
+      QRIS Payment
+     </h3>
+     <img alt="QRIS code image, black and white square barcode for payment" class="w-full h-auto object-contain rounded-md" height="300" loading="eager" src="https://storage.googleapis.com/a1aa/image/ac8f3d77-4d92-4e6f-19a8-b3439ac75e8d.jpg" width="300"/>
+     <button aria-label="Close QRIS modal" class="absolute top-3 right-3 text-cyan-700 hover:text-cyan-900 focus:outline-none" id="btn-close-qris">
+      <i class="fas fa-times fa-lg">
+      </i>
+     </button>
+    </div>
+   </div>
+   <!-- Benefit Popup Modal -->
+   <div aria-labelledby="benefit-popup-title" aria-modal="true" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 hidden" id="benefit-popup" role="dialog">
+    <div class="bg-white rounded-lg shadow-lg p-6 max-w-md w-full relative">
+     <h3 class="text-xl font-semibold mb-4 text-cyan-900 select-none" id="benefit-popup-title">
+      Detail Benefit
+     </h3>
+     <div class="text-cyan-800" id="benefit-popup-content">
+     </div>
+     <button aria-label="Close benefit popup" class="absolute top-3 right-3 text-cyan-700 hover:text-cyan-900 focus:outline-none" id="btn-close-benefit-popup">
+      <i class="fas fa-times fa-lg">
+      </i>
+     </button>
+    </div>
+   </div>
+  </div>
+  <script>
+   (() => {
+      // Elements
+      const loginScreen = document.getElementById('login-screen');
+      const btnLoginAdmin = document.getElementById('btn-login-admin');
+      const btnLoginGuest = document.getElementById('btn-login-guest');
+      const adminPinModal = document.getElementById('admin-pin-modal');
+      const adminPinInput = document.getElementById('admin-pin-input');
+      const btnCancelPin = document.getElementById('btn-cancel-pin');
+      const btnSubmitPin = document.getElementById('btn-submit-pin');
+      const pinError = document.getElementById('pin-error');
+      const loadingScreen = document.getElementById('loading-screen');
+      const mainApp = document.getElementById('main-app');
+      const group1 = document.getElementById('group1');
+      const group2 = document.getElementById('group2');
+      const menuBarButton = document.getElementById('menu-bar-button');
+      const menuBarDropdown = document.getElementById('menu-bar-dropdown');
+      const contentArea = document.getElementById('content-area');
+      const btnQris = document.getElementById('btn-qris');
+      const qrisModal = document.getElementById('qris-modal');
+      const btnCloseQris = document.getElementById('btn-close-qris');
+      const btnCopyPaymethods = document.querySelectorAll('.btn-copy-paymethod');
+      const benefitPopup = document.getElementById('benefit-popup');
+      const benefitPopupContent = document.getElementById('benefit-popup-content');
+      const btnCloseBenefitPopup = document.getElementById('btn-close-benefit-popup');
+      const benefitTabButtons = document.querySelectorAll('.benefit-tab-button');
+      const benefitPanels = document.querySelectorAll('.benefit-panel');
+      const btnKonfirmasi = document.getElementById('btn-konfirmasi');
+      const konfirmasiMessage = document.getElementById('konfirmasi-message');
+      const orderForm = document.getElementById('order-form');
+      const btnToBenefitButtons = document.querySelectorAll('.btn-to-benefit');
+      const homeContent = document.getElementById('home-content');
+      const produkContent = document.getElementById('produk-content');
+      const benefitContent = document.getElementById('benefit-content');
+      const paymentContent = document.getElementById('payment-content');
+      const formContent = document.getElementById('form-content');
+      const mtScreen = document.getElementById('mt-screen');
+      const btnCloseMt = document.getElementById('btn-close-mt');
+      const adminTabButtons = document.querySelectorAll('.admin-tab-button');
+      const adminPanels = document.querySelectorAll('.admin-panel');
+      const catalogsAdminList = document.getElementById('catalogs-admin-list');
+      const benefitsAdminList = document.getElementById('benefits-admin-list');
+      const formAddCatalog = document.getElementById('form-add-catalog');
+      const newCatalogNameInput = document.getElementById('new-catalog-name');
+      const formAddBenefit = document.getElementById('form-add-benefit');
+      const newBenefitNameInput = document.getElementById('new-benefit-name');
+      const newBenefitImageInput = document.getElementById('new-benefit-image');
+      const newBenefitDescInput = document.getElementById('new-benefit-desc');
+      const konfirmasiList = document.getElementById('konfirmasi-list');
+      const btnMtToggle = document.getElementById('btn-mt-toggle');
+      const menuBarContainer = document.getElementById('menu-bar-container');
+      const btnBackForm = document.getElementById('btn-back-form');
+
+      // Constants
+      const ADMIN_PIN = '14045666';
+
+      // State
+      let isAdmin = false;
+      let isMtOn = false;
+      let currentMenu = 'home';
+      let catalogs = [
+        {
+          id: 1,
+          name: 'Katalog 1',
+          products: [
+            { id: 1, name: 'Produk A1', price: 50000 },
+            { id: 2, name: 'Produk A2', price: 75000 },
+            { id: 3, name: 'Produk A3', price: 100000 },
+          ],
+        },
+        {
+          id: 2,
+          name: 'Katalog 2',
+          products: [
+            { id: 4, name: 'Produk B1', price: 120000 },
+            { id: 5, name: 'Produk B2', price: 150000 },
+            { id: 6, name: 'Produk B3', price: 200000 },
+          ],
+        },
+        {
+          id: 3,
+          name: 'Katalog 3',
+          products: [
+            { id: 7, name: 'Produk C1', price: 80000 },
+            { id: 8, name: 'Produk C2', price: 90000 },
+            { id: 9, name: 'Produk C3', price: 110000 },
+          ],
+        },
+      ];
+
+      let benefits = [
+        {
+          id: 1,
+          name: 'Benefit 1',
+          image: 'https://placehold.co/80x80/png?text=Benefit+1',
+          description:
+            'Benefit 1 memberikan keuntungan utama berupa kualitas produk terbaik dan layanan cepat.',
+        },
+        {
+          id: 2,
+          name: 'Benefit 2',
+          image: 'https://placehold.co/80x80/png?text=Benefit+2',
+          description:
+            'Benefit 2 menawarkan diskon khusus dan program loyalitas untuk pelanggan setia.',
+        },
+        {
+          id: 3,
+          name: 'Benefit 3',
+          image: 'https://placehold.co/80x80/png?text=Benefit+3',
+          description:
+            'Benefit 3 menyediakan metode pembayaran aman dan pengiriman cepat ke seluruh Indonesia.',
+        },
+      ];
+
+      let konfirmasiOrders = [];
+
+      // UTILITIES
+      function clearChildren(element) {
+        while (element.firstChild) {
+          element.removeChild(element.firstChild);
+        }
+      }
+
+      // LOGIN FLOW
+      btnLoginAdmin.addEventListener('click', () => {
+        adminPinInput.value = '';
+        pinError.textContent = '';
+        pinError.classList.add('hidden');
+        adminPinModal.classList.remove('hidden');
+        adminPinInput.focus();
+      });
+
+      btnCancelPin.addEventListener('click', () => {
+        adminPinModal.classList.add('hidden');
+      });
+
+      btnSubmitPin.addEventListener('click', () => {
+        const pin = adminPinInput.value.trim();
+        if (pin === ADMIN_PIN) {
+          isAdmin = true;
+          adminPinModal.classList.add('hidden');
+          startLoadingScreen();
+        } else {
+          pinError.textContent = 'PIN salah. Silakan coba lagi.';
+          pinError.classList.remove('hidden');
+          adminPinInput.focus();
+        }
+      });
+
+      btnLoginGuest.addEventListener('click', () => {
+        isAdmin = false;
+        startLoadingScreen();
+      });
+
+      // LOADING SCREEN FLOW
+      function startLoadingScreen() {
+        loginScreen.classList.add('hidden');
+        if (!isAdmin) {
+          loadingScreen.classList.remove('hidden');
+          setTimeout(() => {
+            loadingScreen.classList.add('hidden');
+            showMainApp();
+          }, 5000);
+        } else {
+          // Admin tidak melihat loading screen
+          showMainApp();
+        }
+      }
+
+      // SHOW MAIN APP
+      function showMainApp() {
+        mainApp.classList.remove('hidden');
+        if (isAdmin) {
+          group2.classList.remove('hidden');
+          group1.classList.add('hidden');
+          group1.classList.remove('md:w-2/3');
+        } else {
+          group2.classList.add('hidden');
+          group1.classList.remove('hidden');
+          group1.classList.add('md:w-2/3');
+        }
+        showMenuContent('home');
+      }
+
+      // MENU BAR TOGGLE
+      menuBarButton.addEventListener('click', () => {
+        const expanded = menuBarButton.getAttribute('aria-expanded') === 'true';
+        if (expanded) {
+          menuBarDropdown.classList.add('hidden');
+          menuBarButton.setAttribute('aria-expanded', 'false');
+        } else {
+          menuBarDropdown.classList.remove('hidden');
+          menuBarButton.setAttribute('aria-expanded', 'true');
+          // Focus first menu item
+          const firstMenuItem = menuBarDropdown.querySelector('button, a');
+          if (firstMenuItem) firstMenuItem.focus();
+        }
+      });
+
+      // Close menu if clicked outside
+      document.addEventListener('click', (e) => {
+        if (
+          !menuBarContainer.contains(e.target) &&
+          !menuBarDropdown.classList.contains('hidden')
+        ) {
+          menuBarDropdown.classList.add('hidden');
+          menuBarButton.setAttribute('aria-expanded', 'false');
+        }
+      });
+
+      // MENU BAR NAVIGATION
+      menuBarDropdown.querySelectorAll('button[data-menu]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const menu = btn.getAttribute('data-menu');
+          menuBarDropdown.classList.add('hidden');
+          menuBarButton.setAttribute('aria-expanded', 'false');
+          showMenuContent(menu);
+        });
+      });
+
+      // SHOW MENU CONTENT
+      function showMenuContent(menu) {
+        currentMenu = menu;
+        // Hide all content articles
+        homeContent.classList.add('hidden');
+        produkContent.classList.add('hidden');
+        benefitContent.classList.add('hidden');
+        paymentContent.classList.add('hidden');
+        formContent.classList.add('hidden');
+        mtScreen.classList.add('hidden');
+
+        if (menu === 'produk') {
+          produkContent.classList.remove('hidden');
+        } else if (menu === 'benefit') {
+          benefitContent.classList.remove('hidden');
+          // Reset benefit tabs to first
+          selectBenefitTab('benefit1');
+        } else if (menu === 'payment') {
+          paymentContent.classList.remove('hidden');
+        } else if (menu === 'form') {
+          formContent.classList.remove('hidden');
+        } else if (menu === 'home') {
+          homeContent.classList.remove('hidden');
+        }
+      }
+
+      // BTN TO BENEFIT (from Produk to Benefit tab)
+      function updateBtnToBenefitListeners() {
+        const btns = document.querySelectorAll('.btn-to-benefit');
+        btns.forEach((btn) => {
+          btn.addEventListener('click', () => {
+            showMenuContent('benefit');
+            selectBenefitTab('benefit1');
+          });
+        });
+      }
+      updateBtnToBenefitListeners();
+
+      // BENEFIT TAB SWITCHING
+      function selectBenefitTab(benefitId) {
+        benefitTabButtons.forEach((btn) => {
+          if (btn.dataset.benefit === benefitId) {
+            btn.classList.add('border-cyan-600', 'text-cyan-700');
+            btn.classList.remove('border-transparent', 'text-cyan-500');
+            btn.setAttribute('aria-selected', 'true');
+            btn.setAttribute('tabindex', '0');
+          } else {
+            btn.classList.remove('border-cyan-600', 'text-cyan-700');
+            btn.classList.add('border-transparent', 'text-cyan-500');
+            btn.setAttribute('aria-selected', 'false');
+            btn.setAttribute('tabindex', '-1');
+          }
+        });
+        benefitPanels.forEach((panel) => {
+          if (panel.id === 'benefit-panel-' + benefitId) {
+            panel.classList.remove('hidden');
+          } else {
+            panel.classList.add('hidden');
+          }
+        });
+      }
+
+      benefitTabButtons.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          selectBenefitTab(btn.dataset.benefit);
+        });
+        btn.addEventListener('keydown', (e) => {
+          if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+            e.preventDefault();
+            let idx = Array.from(benefitTabButtons).indexOf(e.currentTarget);
+            if (e.key === 'ArrowRight') {
+              idx = (idx + 1) % benefitTabButtons.length;
+            } else {
+              idx = (idx - 1 + benefitTabButtons.length) % benefitTabButtons.length;
+            }
+            benefitTabButtons[idx].focus();
+            selectBenefitTab(benefitTabButtons[idx].dataset.benefit);
+          }
+        });
+      });
+
+      // BENEFIT POPUP (open on double clicking benefit tab images)
+      benefitTabButtons.forEach((btn) => {
+        btn.addEventListener('dblclick', () => {
+          const benefitId = btn.dataset.benefit;
+          const benefit = benefits.find((b) => 'benefit' + b.id === benefitId);
+          if (benefit) {
+            benefitPopupContent.innerHTML = `
+              <img src="${benefit.image}" alt="Gambar ${benefit.name}" class="w-24 h-24 object-contain mb-4 rounded" />
+              <h4 class="text-lg font-semibold mb-2">${benefit.name}</h4>
+              <p>${benefit.description}</p>
+            `;
+            benefitPopup.classList.remove('hidden');
+            benefitPopup.focus();
+          }
+        });
+      });
+
+      // Benefit popup close
+      btnCloseBenefitPopup.addEventListener('click', () => {
+        benefitPopup.classList.add('hidden');
+      });
+      benefitPopup.addEventListener('click', (e) => {
+        if (e.target === benefitPopup) {
+          benefitPopup.classList.add('hidden');
+        }
+      });
+
+      // QRIS MODAL
+      btnQris.addEventListener('click', () => {
+        qrisModal.classList.remove('hidden');
+        qrisModal.focus();
+      });
+      btnCloseQris.addEventListener('click', () => {
+        qrisModal.classList.add('hidden');
+      });
+      qrisModal.addEventListener('click', (e) => {
+        if (e.target === qrisModal) {
+          qrisModal.classList.add('hidden');
+        }
+      });
+
+      // COPY PAYMENT NUMBERS
+      btnCopyPaymethods.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const number = btn.dataset.number;
+          navigator.clipboard.writeText(number).then(() => {
+            alert(`Nomor ${btn.dataset.paymethod} (${number}) berhasil disalin ke clipboard.`);
+          });
+        });
+      });
+
+      // FORM SUBMIT
+      orderForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        konfirmasiMessage.classList.add('hidden');
+        const fileInput = orderForm.querySelector('#bukti-transfer');
+        if (!fileInput.files || fileInput.files.length === 0) {
+          alert('Mohon unggah bukti transfer.');
+          fileInput.focus();
+          return;
+        }
+        const formData = new FormData(orderForm);
+        const order = {
+          id: Date.now(),
+          namaProduk: formData.get('nama-produk'),
+          nama: formData.get('nama'),
+          noWA: formData.get('no-wa'),
+          reqNamaPanel: formData.get('req-nama-panel'),
+          buktiTransfer: fileInput.files[0],
+          status: 'pending',
+        };
+        konfirmasiOrders.push(order);
+        konfirmasiMessage.textContent = 'Berhasil';
+        konfirmasiMessage.classList.remove('hidden');
+        orderForm.reset();
+        if (isAdmin) {
+          renderKonfirmasiList();
+        }
+      });
+
+      // FORM BACK BUTTON
+      btnBackForm.addEventListener('click', () => {
+        formContent.classList.add('hidden');
+        showMenuContent('home');
+      });
+
+      // RENDER KONFIRMASI LIST (admin)
+      function renderKonfirmasiList() {
+        clearChildren(konfirmasiList);
+        if (konfirmasiOrders.length === 0) {
+          const p = document.createElement('p');
+          p.className = 'text-cyan-700 select-none';
+          p.textContent = 'Belum ada konfirmasi pemesanan.';
+          konfirmasiList.appendChild(p);
+          return;
+        }
+        konfirmasiOrders.forEach((order) => {
+          const div = document.createElement('div');
+          div.className =
+            'border border-cyan-300 rounded-md p-3 bg-white flex flex-col space-y-2';
+          div.setAttribute('tabindex', '0');
+          div.setAttribute('aria-label', `Order dari ${order.nama} untuk produk ${order.namaProduk}, status ${order.status}`);
+
+          const namaProdukP = document.createElement('p');
+          namaProdukP.textContent = `Nama Produk: ${order.namaProduk}`;
+          namaProdukP.className = 'font-semibold text-cyan-800';
+
+          const namaP = document.createElement('p');
+          namaP.textContent = `Nama: ${order.nama}`;
+
+          const noWAP = document.createElement('p');
+          noWAP.textContent = `No WA: ${order.noWA}`;
+
+          const reqNamaPanelP = document.createElement('p');
+          reqNamaPanelP.textContent = `Req Nama Panel: ${order.reqNamaPanel}`;
+
+          const statusP = document.createElement('p');
+          statusP.textContent = `Status: ${order.status}`;
+          statusP.className = order.status === 'pending' ? 'text-yellow-600 font-semibold' : 'text-green-700 font-semibold';
+
+          const buktiImg = document.createElement('img');
+          buktiImg.alt = `Bukti transfer dari ${order.nama}`;
+          buktiImg.className = 'w-32 h-32 object-contain rounded-md border border-cyan-300';
+          buktiImg.src = URL.createObjectURL(order.buktiTransfer);
+
+          const btnConfirm = document.createElement('button');
+          btnConfirm.textContent = 'Konfirmasi';
+          btnConfirm.className =
+            'mt-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md font-semibold focus:outline-none focus:ring-2 focus:ring-green-700';
+          btnConfirm.disabled = order.status !== 'pending';
+
+          btnConfirm.addEventListener('click', () => {
+            order.status = 'confirmed';
+            renderKonfirmasiList();
+            alert(`Order untuk produk ${order.namaProduk} dari ${order.nama} telah dikonfirmasi.`);
+          });
+
+          div.appendChild(namaProdukP);
+          div.appendChild(namaP);
+          div.appendChild(noWAP);
+          div.appendChild(reqNamaPanelP);
+          div.appendChild(statusP);
+          div.appendChild(buktiImg);
+          div.appendChild(btnConfirm);
+
+          konfirmasiList.appendChild(div);
+        });
+      }
+
+      // ADMIN TAB NAVIGATION
+      adminTabButtons.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          adminTabButtons.forEach((b) => {
+            b.classList.remove('bg-cyan-600', 'text-white');
+            b.classList.add('bg-cyan-300', 'text-cyan-900');
+            b.setAttribute('aria-selected', 'false');
+            b.setAttribute('tabindex', '-1');
+          });
+          btn.classList.add('bg-cyan-600', 'text-white');
+          btn.classList.remove('bg-cyan-300', 'text-cyan-900');
+          btn.setAttribute('aria-selected', 'true');
+          btn.setAttribute('tabindex', '0');
+
+          adminPanels.forEach((panel) => {
+            if (panel.id === 'admin-panel-' + btn.dataset.adminTab) {
+              panel.classList.remove('hidden');
+            } else {
+              panel.classList.add('hidden');
+            }
+          });
+        });
+      });
+
+      // RENDER CATALOGS ADMIN LIST
+      function renderCatalogsAdmin() {
+        clearChildren(catalogsAdminList);
+        if (catalogs.length === 0) {
+          const p = document.createElement('p');
+          p.className = 'text-cyan-700 select-none';
+          p.textContent = 'Belum ada katalog.';
+          catalogsAdminList.appendChild(p);
+          return;
+        }
+        catalogs.forEach((catalog) => {
+          const div = document.createElement('div');
+          div.className = 'border border-cyan-300 rounded-md p-3 bg-white space-y-2';
+
+          const headerDiv = document.createElement('div');
+          headerDiv.className = 'flex justify-between items-center';
+
+          const inputName = document.createElement('input');
+          inputName.type = 'text';
+          inputName.value = catalog.name;
+          inputName.className =
+            'border border-cyan-300 rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-cyan-600 flex-grow';
+          inputName.setAttribute('aria-label', `Edit nama katalog ${catalog.name}`);
+
+          inputName.addEventListener('change', () => {
+            catalog.name = inputName.value.trim() || catalog.name;
+            renderCatalogsAdmin();
+            renderProdukContent();
+          });
+
+          const btnDeleteCatalog = document.createElement('button');
+          btnDeleteCatalog.className =
+            'text-red-600 hover:text-red-800 focus:outline-none focus:ring-2 focus:ring-red-600 rounded px-2 py-1';
+          btnDeleteCatalog.setAttribute('aria-label', `Hapus katalog ${catalog.name}`);
+          btnDeleteCatalog.innerHTML = '<i class="fas fa-trash-alt"></i>';
+
+          btnDeleteCatalog.addEventListener('click', () => {
+            if (
+              confirm(
+                `Apakah Anda yakin ingin menghapus katalog "${catalog.name}" beserta semua produk di dalamnya?`
+              )
+            ) {
+              catalogs = catalogs.filter((c) => c.id !== catalog.id);
+              renderCatalogsAdmin();
+              renderProdukContent();
+            }
+          });
+
+          headerDiv.appendChild(inputName);
+          headerDiv.appendChild(btnDeleteCatalog);
+
+          // Products list
+          const productsDiv = document.createElement('div');
+          productsDiv.className = 'space-y-2 max-h-48 overflow-auto border border-cyan-200 rounded-md p-2';
+
+          catalog.products.forEach((product) => {
+            const prodDiv = document.createElement('div');
+            prodDiv.className = 'flex justify-between items-center';
+
+            const inputProdName = document.createElement('input');
+            inputProdName.type = 'text';
+            inputProdName.value = product.name;
+            inputProdName.className =
+              'border border-cyan-300 rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-cyan-600 flex-grow mr-2';
+            inputProdName.setAttribute('aria-label', `Edit nama produk ${product.name}`);
+
+            inputProdName.addEventListener('change', () => {
+              product.name = inputProdName.value.trim() || product.name;
+              renderProdukContent();
+            });
+
+            const inputProdPrice = document.createElement('input');
+            inputProdPrice.type = 'number';
+            inputProdPrice.min = '0';
+            inputProdPrice.value = product.price;
+            inputProdPrice.className =
+              'border border-cyan-300 rounded-md px-2 py-1 w-24 focus:outline-none focus:ring-2 focus:ring-cyan-600';
+            inputProdPrice.setAttribute('aria-label', `Edit harga produk ${product.name}`);
+
+            inputProdPrice.addEventListener('change', () => {
+              const val = parseInt(inputProdPrice.value, 10);
+              if (!isNaN(val) && val >= 0) {
+                product.price = val;
+                renderProdukContent();
+              } else {
+                inputProdPrice.value = product.price;
+              }
+            });
+
+            prodDiv.appendChild(inputProdName);
+            prodDiv.appendChild(inputProdPrice);
+
+            productsDiv.appendChild(prodDiv);
+          });
+
+          div.appendChild(headerDiv);
+          div.appendChild(productsDiv);
+
+          catalogsAdminList.appendChild(div);
+        });
+      }
+
+      // RENDER BENEFITS ADMIN LIST
+      function renderBenefitsAdmin() {
+        clearChildren(benefitsAdminList);
+        if (benefits.length === 0) {
+          const p = document.createElement('p');
+          p.className = 'text-cyan-700 select-none';
+          p.textContent = 'Belum ada benefit.';
+          benefitsAdminList.appendChild(p);
+          return;
+        }
+        benefits.forEach((benefit) => {
+          const div = document.createElement('div');
+          div.className = 'border border-cyan-300 rounded-md p-3 bg-white space-y-2 flex flex-col';
+
+          const inputName = document.createElement('input');
+          inputName.type = 'text';
+          inputName.value = benefit.name;
+          inputName.className =
+            'border border-cyan-300 rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-cyan-600';
+          inputName.setAttribute('aria-label', `Edit nama benefit ${benefit.name}`);
+
+          inputName.addEventListener('change', () => {
+            benefit.name = inputName.value.trim() || benefit.name;
+            renderBenefitTabs();
+          });
+
+          const inputImage = document.createElement('input');
+          inputImage.type = 'url';
+          inputImage.value = benefit.image;
+          inputImage.className =
+            'border border-cyan-300 rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-cyan-600';
+          inputImage.setAttribute('aria-label', `Edit URL gambar benefit ${benefit.name}`);
+
+          inputImage.addEventListener('change', () => {
+            benefit.image = inputImage.value.trim() || benefit.image;
+            renderBenefitTabs();
+          });
+
+          const textareaDesc = document.createElement('textarea');
+          textareaDesc.rows = 2;
+          textareaDesc.className =
+            'border border-cyan-300 rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-cyan-600 resize-y';
+          textareaDesc.value = benefit.description;
+          textareaDesc.setAttribute('aria-label', `Edit isi benefit ${benefit.name}`);
+
+          textareaDesc.addEventListener('change', () => {
+            benefit.description = textareaDesc.value.trim() || benefit.description;
+          });
+
+          const btnDeleteBenefit = document.createElement('button');
+          btnDeleteBenefit.className =
+            'self-end text-red-600 hover:text-red-800 focus:outline-none focus:ring-2 focus:ring-red-600 rounded px-2 py-1 mt-2';
+          btnDeleteBenefit.setAttribute('aria-label', `Hapus benefit ${benefit.name}`);
+          btnDeleteBenefit.innerHTML = '<i class="fas fa-trash-alt"></i>';
+
+          btnDeleteBenefit.addEventListener('click', () => {
+            if (
+              confirm(
+                `Apakah Anda yakin ingin menghapus benefit "${benefit.name}"?`
+              )
+            ) {
+              benefits = benefits.filter((b) => b.id !== benefit.id);
+              renderBenefitsAdmin();
+              renderBenefitTabs();
+            }
+          });
+
+          div.appendChild(inputName);
+          div.appendChild(inputImage);
+          div.appendChild(textareaDesc);
+          div.appendChild(btnDeleteBenefit);
+
+          benefitsAdminList.appendChild(div);
+        });
+      }
+
+      // RENDER PRODUK CONTENT (update produk-content area)
+      function renderProdukContent() {
+        const catalogList = document.getElementById('catalog-list');
+        clearChildren(catalogList);
+
+        catalogs.forEach((catalog) => {
+          const details = document.createElement('details');
+          details.className = 'bg-white rounded-md shadow p-4';
+          if (catalogs[0].id === catalog.id) details.setAttribute('open', '');
+
+          const summary = document.createElement('summary');
+          summary.className = 'cursor-pointer font-semibold text-cyan-800 select-none';
+          summary.textContent = catalog.name;
+
+          const ul = document.createElement('ul');
+          ul.className = 'mt-3 space-y-2';
+
+          catalog.products.forEach((product) => {
+            const li = document.createElement('li');
+            li.className = 'flex justify-between items-center border-b border-cyan-200 pb-2';
+
+            const spanName = document.createElement('span');
+            spanName.textContent = product.name;
+
+            const divRight = document.createElement('div');
+            divRight.className = 'flex items-center space-x-3';
+
+            const spanPrice = document.createElement('span');
+            spanPrice.className = 'font-semibold text-cyan-700';
+            spanPrice.textContent = `Rp ${product.price.toLocaleString('id-ID')}`;
+
+            const btnBenefit = document.createElement('button');
+            btnBenefit.className =
+              'btn-to-benefit bg-cyan-600 text-white px-3 py-1 rounded hover:bg-cyan-700 focus:outline-none focus:ring-2 focus:ring-cyan-700';
+            btnBenefit.setAttribute('aria-label', `Lihat benefit ${product.name}`);
+            btnBenefit.textContent = 'Benefit';
+
+            btnBenefit.addEventListener('click', () => {
+              showMenuContent('benefit');
+              selectBenefitTab('benefit1');
+            });
+
+            divRight.appendChild(spanPrice);
+            divRight.appendChild(btnBenefit);
+
+            li.appendChild(spanName);
+            li.appendChild(divRight);
+
+            ul.appendChild(li);
+          });
+
+          details.appendChild(summary);
+          details.appendChild(ul);
+
+          catalogList.appendChild(details);
+        });
+      }
+
+      // RENDER BENEFIT TABS (update benefit-content tabs)
+      function renderBenefitTabs() {
+        benefitTabButtons.forEach((btn) => {
+          const benefitId = btn.dataset.benefit;
+          const benefit = benefits.find((b) => 'benefit' + b.id === benefitId);
+          if (benefit) {
+            btn.querySelector('img').src = benefit.image;
+            btn.querySelector('img').alt = `Gambar ${benefit.name}`;
+            btn.childNodes[1].textContent = benefit.name;
+          }
+        });
+
+        benefitPanels.forEach((panel) => {
+          const benefitId = panel.id.replace('benefit-panel-', '');
+          const benefit = benefits.find((b) => 'benefit' + b.id === benefitId);
+          if (benefit) {
+            panel.querySelector('h3').textContent = benefit.name;
+            panel.querySelector('p').textContent = benefit.description;
+          }
+        });
+      }
+
+      // MT SCREEN CONTROL
+      btnCloseMt.addEventListener('click', () => {
+        mtScreen.classList.add('hidden');
+      });
+
+      btnMtToggle.addEventListener('click', () => {
+        isMtOn = !isMtOn;
+        btnMtToggle.textContent = isMtOn ? 'OFF' : 'ON';
+        btnMtToggle.setAttribute('aria-pressed', isMtOn ? 'true' : 'false');
+        if (isMtOn) {
+          mtScreen.classList.remove('hidden');
+          if (!isAdmin) {
+            mtScreen.classList.remove('hidden');
+          }
+        } else {
+          mtScreen.classList.add('hidden');
+        }
+      });
+
+      function updateMtScreenVisibility() {
+        if (isMtOn && !isAdmin) {
+          mtScreen.classList.remove('hidden');
+        } else {
+          mtScreen.classList.add('hidden');
+        }
+      }
+
+      btnMtToggle.addEventListener('click', () => {
+        updateMtScreenVisibility();
+      });
+
+      // Initial render
+      renderCatalogsAdmin();
+      renderBenefitsAdmin();
+      renderProdukContent();
+      renderBenefitTabs();
+      renderKonfirmasiList();
+
+      // Accessibility: trap focus in modals
+      function trapFocus(element) {
+        const focusableElements = element.querySelectorAll(
+          'a[href], area[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), iframe, object, embed, [tabindex="0"], [contenteditable]'
+        );
+        const firstFocusable = focusableElements[0];
+        const lastFocusable = focusableElements[focusableElements.length - 1];
+
+        element.addEventListener('keydown', (e) => {
+          if (e.key === 'Tab') {
+            if (e.shiftKey) {
+              if (document.activeElement === firstFocusable) {
+                e.preventDefault();
+                lastFocusable.focus();
+              }
+            } else {
+              if (document.activeElement === lastFocusable) {
+                e.preventDefault();
+                firstFocusable.focus();
+              }
+            }
+          }
+          if (e.key === 'Escape') {
+            if (element === adminPinModal) {
+              adminPinModal.classList.add('hidden');
+              btnLoginAdmin.focus();
+            } else if (element === qrisModal) {
+              qrisModal.classList.add('hidden');
+              btnQris.focus();
+            } else if (element === benefitPopup) {
+              benefitPopup.classList.add('hidden');
+            }
+          }
+        });
+      }
+      trapFocus(adminPinModal);
+      trapFocus(qrisModal);
+      trapFocus(benefitPopup);
+
+      // Keyboard navigation for menu bar dropdown
+      menuBarDropdown.addEventListener('keydown', (e) => {
+        const items = Array.from(menuBarDropdown.querySelectorAll('button, a'));
+        let index = items.indexOf(document.activeElement);
+        if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          index = (index + 1) % items.length;
+          items[index].focus();
+        } else if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          index = (index - 1 + items.length) % items.length;
+          items[index].focus();
+        } else if (e.key === 'Escape') {
+          menuBarDropdown.classList.add('hidden');
+          menuBarButton.setAttribute('aria-expanded', 'false');
+          menuBarButton.focus();
+        }
+      });
+    })();
+  </script>
+ </body>
+</html>
